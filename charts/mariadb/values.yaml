@@ -1,0 +1,28 @@
+imagePullSecrets: ecr-secret
+
+image:
+  repository: 992382545251.dkr.ecr.us-east-1.amazonaws.com/roei-mariadb
+  tag: "10.6.4-focal"
+  pullPolicy: IfNotPresent
+
+service:
+  name: mariadb
+  port: 3306
+
+auth:
+  database: wordpress
+  user: wordpress
+  
+
+persistence:
+  enabled: true
+  size: 2Gi
+  storageClassName: standard
+
+resources:
+  requests:
+    cpu: 250m
+    memory: 256Mi
+  limits:
+    cpu: 500m
+    memory: 512Mi

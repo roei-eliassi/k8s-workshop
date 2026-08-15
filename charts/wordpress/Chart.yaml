@@ -1,0 +1,6 @@
+apiVersion: v2
+name: wordpress
+description: WordPress application deployment with kubernetes-native resources
+type: application
+version: 0.1.0
+appVersion: "7.0.2"

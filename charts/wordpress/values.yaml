@@ -1,0 +1,28 @@
+replicaCount: 2
+imagePullSecrets: ecr-secret
+
+image:
+  repository: 992382545251.dkr.ecr.us-east-1.amazonaws.com/roei-wordpress
+  tag: "7.0.2"
+  pullPolicy: IfNotPresent
+
+service:
+  type: ClusterIP
+  port: 80
+
+ingress:
+  enabled: true
+  host: wordpress.local
+
+wordpressDatabase:
+  host: mariadb
+  name: wordpress
+  user: wordpress
+
+resources:
+  requests:
+    cpu: 250m
+    memory: 256Mi
+  limits:
+    cpu: 500m
+    memory: 512Mi

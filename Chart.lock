@@ -1,0 +1,9 @@
+dependencies:
+- name: wordpress
+  repository: file://charts/wordpress
+  version: 0.1.0
+- name: mariadb
+  repository: file://charts/mariadb
+  version: 0.1.0
+digest: sha256:9361634dad5e849bac2f77efcdbc92086e659bb222df10199c64c9fa5cabfad6
+generated: "2026-08-13T20:49:09.468608885Z"
