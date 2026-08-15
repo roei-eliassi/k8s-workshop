@@ -28,29 +28,30 @@ The project is built as an **Umbrella Helm Chart** - a top-level chart (`wordpre
 
 ## Project Structure
 
+```
 wordpress-app/
-├── Chart.yaml # Umbrella chart, declares dependencies on 2 sub-charts
-├── Chart.lock # Auto-generated dependency lock file (Helm 3)
+├── Chart.yaml                      # Umbrella chart, declares dependencies on 2 sub-charts
+├── Chart.lock                      # Auto-generated dependency lock file (Helm 3)
 ├── charts/
-│ ├── wordpress/
-│ │ ├── Chart.yaml
-│ │ ├── values.yaml # No passwords
-│ │ └── templates/
-│ │ ├── deployment.yaml # 2 replicas, imagePullSecrets, DB_PASSWORD from Secret
-│ │ ├── service.yaml # ClusterIP
-│ │ └── ingress.yaml # host: wordpress.local
-│ └── mariadb/
-│ ├── Chart.yaml
-│ ├── values.yaml # No passwords - only database/user names
-│ ├── values-secret.yaml # Not in git! See Secret Management
-│ └── templates/
-│ ├── statefulset.yaml # Built-in PVC (volumeClaimTemplates)
-│ ├── service.yaml # headless
-│ └── secret.yaml # mariadb-secret
-├── values-monitoring.yaml # kube-prometheus-stack configuration
-├── values-monitoring-secret.yaml # Not in git! Grafana admin password
+│   ├── wordpress/
+│   │   ├── Chart.yaml
+│   │   ├── values.yaml             # No passwords
+│   │   └── templates/
+│   │       ├── deployment.yaml     # 2 replicas, imagePullSecrets, DB_PASSWORD from Secret
+│   │       ├── service.yaml        # ClusterIP
+│   │       └── ingress.yaml        # host: wordpress.local
+│   └── mariadb/
+│       ├── Chart.yaml
+│       ├── values.yaml             # No passwords - only database/user names
+│       ├── values-secret.yaml      # Not in git! See Secret Management
+│       └── templates/
+│           ├── statefulset.yaml    # Built-in PVC (volumeClaimTemplates)
+│           ├── service.yaml        # headless
+│           └── secret.yaml         # mariadb-secret
+├── values-monitoring.yaml          # kube-prometheus-stack configuration
+├── values-monitoring-secret.yaml   # Not in git! Grafana admin password
 └── .gitignore
-
+```
 
 ## Prerequisites
 
