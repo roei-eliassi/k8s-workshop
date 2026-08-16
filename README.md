@@ -12,7 +12,7 @@ WordPress + MariaDB, moved from `docker-compose` to Kubernetes with Helm. Also h
 - [Installation - Monitoring](#installation---monitoring)
 - [Accessing the Application and Dashboards](#accessing-the-application-and-dashboards)
 - [Grafana Dashboard](#grafana-dashboard)
-- [More information](#More-information)
+- [More information](#more-information)
 
 ## Architecture
 
@@ -61,33 +61,33 @@ wordpress-app/
 
 1. Start minikube:
 
-```bash
+   ```bash
    minikube start --memory=6000mb --cpus=2
-```
+   ```
 
 2. Log into ECR and create an imagePullSecret (needed because the EC2's AWS permissions don't automatically reach pods inside minikube):
 
-```bash
+   ```bash
    aws ecr get-login-password --region us-east-1 | docker login --username AWS --password-stdin <ACCOUNT_ID>.dkr.ecr.us-east-1.amazonaws.com
-```
+   ```
 
-```bash
+   ```bash
    kubectl create secret docker-registry ecr-secret --docker-server=<ACCOUNT_ID>.dkr.ecr.us-east-1.amazonaws.com --docker-username=AWS --docker-password=$(aws ecr get-login-password --region us-east-1) --namespace=default
-```
+   ```
 
 3. Create `charts/mariadb/values-secret.yaml` - see Secret Management below.
 
 4. Install:
 
-```bash
+   ```bash
    helm install wordpress-app . -f charts/mariadb/values-secret.yaml
-```
+   ```
 
    To update later, use `upgrade` instead of `install`:
 
-```bash
+   ```bash
    helm upgrade wordpress-app . -f charts/mariadb/values-secret.yaml
-```
+   ```
 
 ## Secret Management
 
@@ -129,43 +129,33 @@ Separate chart, separate namespace, doesn't touch the umbrella chart above.
 
 2. Add the chart repo:
 
-```bash
+   ```bash
    helm repo add prometheus-community https://prometheus-community.github.io/helm-charts
    helm repo update
-```
+   ```
 
 3. Install:
 
-```bash
+   ```bash
    kubectl create namespace monitoring
-```
+   ```
 
-```bash
+   ```bash
    helm install monitoring prometheus-community/kube-prometheus-stack --namespace monitoring -f values-monitoring.yaml -f values-monitoring-secret.yaml
-```
+   ```
 
 `values-monitoring.yaml` turns off monitoring for control-plane pieces minikube doesn't expose by default (`kubeControllerManager`, `kubeScheduler`, `kubeEtcd`), and lowers resource limits to fit a small machine.
 
 ## Accessing the Application and Dashboards
 
-Everything runs on one EC2 with minikube, so you need a few terminal windows open at once, all SSH'd into that same machine:
-
-| Terminal | Command | What it's for |
-|---|---|---|
-| 1 | normal shell | kubectl/helm commands |
-| 2 | `minikube tunnel` (no sudo) | needed by minikube to route traffic |
-| 3 | `kubectl port-forward svc/wordpress 8080:80 --address 0.0.0.0` | WordPress on port 8080 |
-| 4 | `kubectl port-forward svc/monitoring-grafana -n monitoring --address 0.0.0.0 3000:80` | Grafana on port 3000 |
-
-Each one stays running in that terminal - close it and that service stops working until you start it again.
-
-Then: `http://<EC2-PUBLIC-IP>:8080` for WordPress, `http://<EC2-PUBLIC-IP>:3000` for Grafana (`admin` + the password from `values-monitoring-secret.yaml`).
-
-Without an Elastic IP, the EC2's public IP changes every restart. Check it with:
+Everything runs on one EC2 with minikube. SSH into that machine and run:
 
 ```bash
-curl -s http://169.254.169.254/latest/meta-data/public-ipv4
+kubectl port-forward svc/wordpress 8080:80 --address 0.0.0.0 &
+kubectl port-forward svc/monitoring-grafana -n monitoring --address 0.0.0.0 3000:80 &
 ```
+
+Then: `http://<EC2-PUBLIC-IP>:8080` for WordPress, `http://<EC2-PUBLIC-IP>:3000` for Grafana (`admin` + the password from `values-monitoring-secret.yaml`).
 
 ## Grafana Dashboard
 
@@ -177,8 +167,7 @@ Dashboard called **"App Monitoring"**, 3 panels:
 | Wordpress & mariaDB memory usage | Time series | Memory each pod is using, compared to its limit. |
 | Number of restarts | Stat | Total restarts per pod. |
 
-
-## More information 
+## More information
 
 Built for a workshop, not production:
 
