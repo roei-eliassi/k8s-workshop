@@ -22,6 +22,8 @@ WordPress doesn't have its own password Secret - it just reads `mariadb-secret`,
 
 MariaDB is a StatefulSet because it needs a fixed name and its own disk. WordPress is a normal Deployment since any replica can handle any request.
 
+WordPress also has its own PersistentVolumeClaim, mounted at `/var/www/html`, so uploaded media, themes and plugins survive pod restarts - matching how the original docker-compose set this up. Both replicas share the same volume (see More information for the trade-off there).
+
 Monitoring is a separate Helm install, not part of the umbrella chart. It's an existing chart (`kube-prometheus-stack`), in its own namespace, and it just reads metrics from outside - nothing pushes data into it.
 
 ## Project Structure
@@ -35,7 +37,8 @@ wordpress-app/
 │   │   ├── Chart.yaml
 │   │   ├── values.yaml             # no passwords here
 │   │   └── templates/
-│   │       ├── deployment.yaml     # 2 replicas
+│   │       ├── deployment.yaml     # 2 replicas, mounts pvc.yaml at /var/www/html
+│   │       ├── pvc.yaml            # persists uploads/themes/plugins
 │   │       ├── service.yaml
 │   │       └── ingress.yaml
 │   └── mariadb/
