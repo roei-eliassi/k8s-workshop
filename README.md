@@ -174,3 +174,4 @@ Built for a workshop, not production:
 - No TLS, no autoscaling, Prometheus only keeps 6 hours of history.
 - EC2's public IP changes on every restart (no Elastic IP).
 - ECR tokens and the imagePullSecret expire after about 12 hours, need manual refresh.
+- WordPress replicas share a single `ReadWriteOnce` PVC for `/var/www/html` (uploads/themes/plugins). This works because minikube only has one node - on a real multi-node cluster this would need `ReadWriteMany` storage instead.

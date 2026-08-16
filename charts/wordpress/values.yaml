@@ -26,3 +26,7 @@ resources:
   limits:
     cpu: 500m
     memory: 512Mi
+
+persistence:
+  size: 1Gi
+  storageClassName: standard

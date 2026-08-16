@@ -9,6 +9,8 @@ spec:
   selector:
     matchLabels:
       app: wordpress
+  strategy:
+    type: Recreate
   template:
     metadata:
       labels:
@@ -31,7 +33,7 @@ spec:
               value: {{ .Values.wordpressDatabase.user }}
             - name: WORDPRESS_DB_PASSWORD
               valueFrom:
-                secretKeyRef: 
+                secretKeyRef:
                   name: mariadb-secret
                   key: password
           resources:
@@ -41,3 +43,10 @@ spec:
             limits:
               cpu: {{ .Values.resources.limits.cpu }}
               memory: {{ .Values.resources.limits.memory }}
+          volumeMounts:
+            - mountPath: /var/www/html
+              name: wordpress-data
+      volumes:
+        - name: wordpress-data
+          persistentVolumeClaim:
+            claimName: wordpress-data
